@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useMemo } from "react";
 
 import { useEffect, useState } from "react";
 import {
@@ -21,9 +21,19 @@ import Link from "next/link";
 export default function BrokenPage() {
 	const [shake, setShake] = useState(false);
 	const [errorMessages, setErrorMessages] = useState<string[]>([]);
-	const [brokenProducts, setBrokenProducts] = useState<any[]>([]);
+	const [brokenProducts, setBrokenProducts] = useState<
+		{
+			id: number;
+			name: string;
+			price: string;
+			description: string;
+			image: string;
+			icon: React.ElementType;
+		}[]
+	>([]);
 	const [showEasterEgg, setShowEasterEgg] = useState(false);
 	const [cartCount, setCartCount] = useState<number>(0);
+	const [totalPrice, setTotalPrice] = useState<string>("84,90 kr");
 
 	// Random error messages that will appear on the page (in Norwegian)
 	const possibleErrors = [
@@ -40,48 +50,51 @@ export default function BrokenPage() {
 	];
 
 	// Bakery products with Easter theme
-	const bakeryProducts = [
-		{
-			id: 1,
-			name: "Påskebolle Deluxe",
-			price: "39,90 kr",
-			description: "Nybakt bolle med påskepynt og gul glasur",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Egg,
-		},
-		{
-			id: 2,
-			name: "Påskekake",
-			price: "89,50 kr",
-			description: "Saftig kake med marsipanpynt og påskemotiv",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Cake,
-		},
-		{
-			id: 3,
-			name: "Sjokoladeegg",
-			price: "45,00 kr",
-			description: "Store sjokoladeegg med overraskelse inni",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Cookie,
-		},
-		{
-			id: 4,
-			name: "Påskemarsipan",
-			price: "69,90 kr",
-			description: "Hjemmelaget marsipan formet som påskefigurer",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Rabbit,
-		},
-		{
-			id: 5,
-			name: "Påskebrød",
-			price: "55,00 kr",
-			description: "Nybakt brød med gulrøtter og påskekrydder",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Utensils,
-		},
-	];
+	const bakeryProducts = useMemo(
+		() => [
+			{
+				id: 1,
+				name: "Påskebolle Deluxe",
+				price: "39,90 kr",
+				description: "Nybakt bolle med påskepynt og gul glasur",
+				image: "/placeholder.svg?height=200&width=200",
+				icon: Egg,
+			},
+			{
+				id: 2,
+				name: "Påskekake",
+				price: "89,50 kr",
+				description: "Saftig kake med marsipanpynt og påskemotiv",
+				image: "/placeholder.svg?height=200&width=200",
+				icon: Cake,
+			},
+			{
+				id: 3,
+				name: "Sjokoladeegg",
+				price: "45,00 kr",
+				description: "Store sjokoladeegg med overraskelse inni",
+				image: "/placeholder.svg?height=200&width=200",
+				icon: Cookie,
+			},
+			{
+				id: 4,
+				name: "Påskemarsipan",
+				price: "69,90 kr",
+				description: "Hjemmelaget marsipan formet som påskefigurer",
+				image: "/placeholder.svg?height=200&width=200",
+				icon: Rabbit,
+			},
+			{
+				id: 5,
+				name: "Påskebrød",
+				price: "55,00 kr",
+				description: "Nybakt brød med gulrøtter og påskekrydder",
+				image: "/placeholder.svg?height=200&width=200",
+				icon: Utensils,
+			},
+		],
+		[],
+	);
 
 	useEffect(() => {
 		// Create random shake effect
@@ -114,12 +127,18 @@ export default function BrokenPage() {
 			setCartCount(Math.floor(Math.random() * 10));
 		}, 7000);
 
+		// Random total price changes
+		const priceInterval = setInterval(() => {
+			setTotalPrice(Math.random() > 0.5 ? "84,90 kr" : "ERROR");
+		}, 5000);
+
 		return () => {
 			clearInterval(shakeInterval);
 			clearInterval(errorInterval);
 			clearInterval(cartInterval);
+			clearInterval(priceInterval);
 		};
-	}, [errorMessages.length]);
+	}, [errorMessages.length, bakeryProducts]);
 
 	// Easter egg trigger
 	const handleSecretClick = () => {
@@ -159,19 +178,19 @@ export default function BrokenPage() {
 				<nav className="rotate-3 animate-float">
 					<ul className="flex gap-2 text-sm">
 						<li className="hover:animate-bounce">
-							<a href="#" className="broken-link text-pink-600">
+							<Link href="/butikk" className="broken-link text-pink-600">
 								B<span className="animate-flicker">u</span>tikk
-							</a>
+							</Link>
 						</li>
 						<li className="hover:animate-bounce">
-							<a href="#" className="broken-link text-green-600">
+							<Link href="/om" className="broken-link text-green-600">
 								O<span className="text-yellow-500 animate-pulse">m</span>
-							</a>
+							</Link>
 						</li>
 						<li className="hover:animate-bounce">
-							<a href="#" className="broken-link text-blue-500">
+							<Link href="/kontakt" className="broken-link text-blue-500">
 								K<span className="invisible">o</span>ntakt
-							</a>
+							</Link>
 						</li>
 					</ul>
 				</nav>
@@ -200,7 +219,7 @@ export default function BrokenPage() {
 				<div className="absolute top-20 right-10 animate-fall-medium">
 					<div className="bg-green-100 p-2 shadow-md -rotate-6 text-xs border-2 border-yellow-300">
 						<p className="text-purple-600">
-							Rabattkode: <span className="line-through">PÅSKE2024</span>
+							Rabattkode: <span className="line-through">PÅSKE2025</span>
 						</p>
 						<p className="text-red-500">Ugyldig kode</p>
 					</div>
@@ -241,32 +260,37 @@ export default function BrokenPage() {
 
 							<div className="flex flex-col sm:flex-row gap-2 mt-3">
 								<button
+									type="button"
 									className="bg-gradient-to-r from-yellow-400 to-pink-400 text-purple-900 px-4 py-2 rounded hover:animate-wiggle flex-1 font-bold"
 									onClick={handleSecretClick}
 								>
 									Påskens Spesial (Klikk På Eget Ansvar)
 								</button>
 
-								<Link
-									href="/nettbutikk-fisket"
+								{/* <Link
+									href="/nettbutikk-fikset"
 									className="bg-green-100 text-green-800 px-4 py-2 rounded text-center text-sm flex-1 border border-green-300"
 								>
 									Prøv den fikset versjonen
-								</Link>
+								</Link> */}
 							</div>
 						</div>
 
 						<div className="w-full relative h-48 animate-glitch-image">
-							<div className="absolute inset-0 bg-static opacity-30 z-10"></div>
+							<div className="absolute inset-0 bg-static opacity-30 z-10" />
 							<Image
-								src="/placeholder.svg?height=300&width=400"
-								alt="Ødelagt Påskebilde"
+								src="/hint.png"
+								alt="Mystisk Påskeegg"
 								width={400}
 								height={300}
-								className="object-cover w-full h-full broken-image"
+								className="object-contain w-full h-full broken-image hover:animate-glitch-hover transform hover:scale-110 transition-transform duration-300"
+								style={{
+									filter: "hue-rotate(45deg) contrast(150%) brightness(110%)",
+									mixBlendMode: "multiply",
+								}}
 							/>
 							<div className="absolute bottom-0 left-0 right-0 bg-purple-500 text-white text-center py-1 animate-slide-in-out text-xs">
-								Feil ved lasting av bilde: assets/påske-hero.jpg ikke funnet
+								Mystisk Påskeegg Oppdaget: Prøv å klikk!
 							</div>
 						</div>
 					</div>
@@ -274,12 +298,12 @@ export default function BrokenPage() {
 
 				{/* Error messages that appear randomly */}
 				<div className="mt-6 grid grid-cols-1 gap-3">
-					{errorMessages.map((error, index) => (
+					{errorMessages.map((error, i) => (
 						<div
-							key={index}
+							key={`error-${error.substring(0, 10)}-${i}`}
 							className="bg-yellow-100 border-2 border-pink-300 text-purple-700 px-3 py-2 rounded relative animate-fade-in text-sm"
 							style={{
-								animationDelay: `${index * 0.2}s`,
+								animationDelay: `${i * 0.2}s`,
 								transform: `rotate(${Math.random() * 6 - 3}deg)`,
 							}}
 						>
@@ -309,15 +333,15 @@ export default function BrokenPage() {
 
 				{/* Broken products section */}
 				<section className="mt-4 grid grid-cols-1 gap-4">
-					{brokenProducts.map((product, i) => (
+					{brokenProducts.map((product) => (
 						<div
-							key={i}
+							key={product.id || `product-${product.name}`}
 							className="bg-green-50 p-3 shadow-md relative overflow-hidden hover:animate-glitch-hover border-2 border-yellow-300"
 							style={{ transform: `rotate(${Math.random() * 4 - 2}deg)` }}
 						>
 							<div className="flex flex-col sm:flex-row gap-3">
 								<div className="h-32 w-32 bg-pink-100 flex items-center justify-center relative mx-auto sm:mx-0 border-2 border-purple-200">
-									<div className="absolute inset-0 bg-static opacity-20"></div>
+									<div className="absolute inset-0 bg-static opacity-20" />
 									<div className="text-purple-400 flex flex-col items-center">
 										{React.createElement(product.icon, {
 											className: "h-8 w-8 mb-1",
@@ -352,6 +376,7 @@ export default function BrokenPage() {
 										</div>
 
 										<button
+											type="button"
 											className="bg-yellow-400 text-purple-800 px-3 py-1 rounded text-sm hover:bg-yellow-500 animate-button-glitch flex items-center gap-1 font-bold"
 											onClick={handleAddToCart}
 										>
@@ -420,7 +445,7 @@ export default function BrokenPage() {
 					<div className="flex justify-between mb-4">
 						<span className="font-bold text-purple-700">Total:</span>
 						<span className="font-bold animate-text-corrupt text-pink-600">
-							{Math.random() > 0.5 ? "84,90 kr" : "ERROR"}
+							{totalPrice}
 						</span>
 					</div>
 
@@ -497,7 +522,10 @@ export default function BrokenPage() {
 									className="bg-purple-700 text-white px-3 py-2 rounded-l w-full animate-input-glitch text-sm border border-yellow-300"
 									placeholder="Din e-post..."
 								/>
-								<button className="bg-yellow-400 text-purple-800 px-3 py-2 rounded-r hover:bg-yellow-500 animate-button-glitch text-sm font-bold">
+								<button
+									type="button"
+									className="bg-yellow-400 text-purple-800 px-3 py-2 rounded-r hover:bg-yellow-500 animate-button-glitch text-sm font-bold"
+								>
 									Abonner
 								</button>
 							</div>
