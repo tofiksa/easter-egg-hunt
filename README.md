@@ -1,1 +1,1 @@
-# easter-egg-hunt
+Riktig svar: trapp
