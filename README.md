@@ -1,1 +1,3 @@
-# easter-egg-hunt
+fn main() {
+    println!("Hello, world!");
+}
