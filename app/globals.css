@@ -6,6 +6,11 @@
   --foreground-rgb: 88, 28, 135;
   --background-start-rgb: 253, 242, 255;
   --background-end-rgb: 255, 255, 240;
+  /* Decay theme (DESIGN.md) */
+  --decay-bleached-lilac: #faf5ff;
+  --decay-mold-edge: rgba(77, 124, 15, 0.12);
+  --decay-vignette: rgba(45, 20, 60, 0.35);
+  --decay-scanline: rgba(0, 0, 0, 0.04);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -18,9 +23,68 @@
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(to bottom, transparent, rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  background: linear-gradient(
+      165deg,
+      var(--decay-bleached-lilac) 0%,
+      rgb(var(--background-start-rgb)) 45%,
+      rgb(var(--background-end-rgb)) 100%
+    )
+    rgb(var(--background-start-rgb));
   touch-action: manipulation; /* Improve touch experience */
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+}
+
+/* Full-page decay atmosphere: vignette on pseudo; scanlines separate (z under content) */
+.decay-atmosphere {
+  position: relative;
+  isolation: isolate;
+}
+
+.decay-atmosphere::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  box-shadow: inset 0 0 120px 40px var(--decay-vignette);
+  animation: vignette-breathe 8s ease-in-out infinite;
+}
+
+.decay-scanlines {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--decay-scanline) 2px,
+    var(--decay-scanline) 3px
+  );
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  animation: scanline-jitter 6s steps(4) infinite;
+}
+
+.decay-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Svært svakt filmkorn over alt — «gammel overflate» */
+.decay-grain {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  animation: grain-flicker 4s ease-in-out infinite;
+}
+
+.decay-mold-border {
+  box-shadow: inset 0 0 0 1px var(--decay-mold-edge);
 }
 
 /* Glitch animations */
@@ -272,6 +336,104 @@ body {
   }
 }
 
+@keyframes vignette-breathe {
+  0%,
+  100% {
+    box-shadow: inset 0 0 100px 30px var(--decay-vignette);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: inset 0 0 140px 50px rgba(45, 20, 60, 0.5);
+    opacity: 0.92;
+  }
+}
+
+@keyframes scanline-jitter {
+  0% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(1px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+  75% {
+    transform: translateY(1px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes decay-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(3px, 6px) rotate(0.4deg);
+  }
+  66% {
+    transform: translate(-2px, 4px) rotate(-0.3deg);
+  }
+}
+
+@keyframes power-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+  4% {
+    opacity: 0.92;
+    filter: brightness(0.97);
+  }
+  8% {
+    opacity: 1;
+    filter: brightness(1.02);
+  }
+  12% {
+    opacity: 0.88;
+    filter: brightness(0.95);
+  }
+  18% {
+    opacity: 1;
+    filter: brightness(1);
+  }
+}
+
+@keyframes structural-sway {
+  0%,
+  100% {
+    transform: skewX(0deg);
+  }
+  50% {
+    transform: skewX(0.35deg);
+  }
+}
+
+@keyframes crumb-drift {
+  0% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+    opacity: 0.35;
+  }
+  100% {
+    transform: translateY(18vh) translateX(8px) rotate(120deg);
+    opacity: 0;
+  }
+}
+
+@keyframes grain-flicker {
+  0%,
+  100% {
+    opacity: 0.07;
+  }
+  50% {
+    opacity: 0.11;
+  }
+}
+
 /* Apply animations to elements */
 .animate-shake {
   animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
@@ -355,6 +517,30 @@ body {
 
 .animate-bounce-in {
   animation: bounce-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-decay-drift {
+  animation: decay-drift 14s ease-in-out infinite;
+}
+
+.animate-decay-drift-slow {
+  animation: decay-drift 22s ease-in-out 2s infinite;
+}
+
+.animate-power-flicker {
+  animation: power-flicker 5s ease-in-out infinite;
+}
+
+.animate-structural-sway {
+  animation: structural-sway 12s ease-in-out infinite;
+}
+
+.animate-crumb {
+  animation: crumb-drift 12s linear infinite;
+}
+
+.animate-crumb-delayed {
+  animation: crumb-drift 14s linear 4s infinite;
 }
 
 /* Special effects */
@@ -462,5 +648,56 @@ body {
   input,
   textarea {
     font-size: 16px; /* Prevent iOS zoom */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decay-atmosphere::before,
+  .decay-scanlines,
+  .decay-grain {
+    animation: none !important;
+  }
+
+  .decay-grain {
+    opacity: 0.05;
+  }
+
+  .decay-crumb {
+    display: none;
+  }
+
+  .animate-shake,
+  .animate-float,
+  .animate-float-delay,
+  .animate-float-more-delay,
+  .animate-spin-slow,
+  .animate-fall-slow,
+  .animate-fall-medium,
+  .animate-blink,
+  .animate-glitch,
+  .animate-text-corrupt,
+  .animate-text-corrupt-delay,
+  .animate-slide-in,
+  .animate-slide-in-out,
+  .animate-fade-in,
+  .animate-bounce-slow,
+  .animate-wiggle,
+  .animate-input-glitch,
+  .animate-button-glitch,
+  .animate-flicker,
+  .animate-bounce-in,
+  .animate-decay-drift,
+  .animate-decay-drift-slow,
+  .animate-power-flicker,
+  .animate-structural-sway,
+  .animate-crumb,
+  .animate-crumb-delayed {
+    animation: none !important;
+  }
+
+  .glitch-text::before,
+  .glitch-text::after,
+  .glitch-text-severe {
+    animation: none !important;
   }
 }
