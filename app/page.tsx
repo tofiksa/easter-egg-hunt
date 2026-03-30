@@ -21,6 +21,8 @@ import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
 import {
 	useRandomMobileVibration,
 	vibrateIfSupported,
+	unlockAudioContext,
+	canVibrate,
 } from "@/hooks/use-mobile-vibration";
 
 /** Deterministic 0–1 from id + salt (stable across renders; avoids hydration drift). */
@@ -169,6 +171,35 @@ export default function BrokenPage() {
 	const isMobile = useIsMobile();
 	const vibrationOn = isMobile && !reduceMotion;
 	useRandomMobileVibration({ active: vibrationOn });
+
+	/* ─── iOS AudioContext-unlock + haptisk velkomst ────────────────────
+	   iOS krever en brukergest (touch/click) for å starte AudioContext.
+	   Vi lytter på første interaksjon, låser opp konteksten, og trigger
+	   umiddelbart en audio-rumble + visuell shake som «haptisk velkomst»
+	   for iOS-brukere som ikke har Vibration API. */
+	const hasTriggeredIOSWelcome = useRef(false);
+	useEffect(() => {
+		const unlock = () => {
+			unlockAudioContext();
+			// Trigger haptisk velkomst-shake for iOS etter unlock
+			if (!hasTriggeredIOSWelcome.current && isMobile && !reduceMotion && !canVibrate()) {
+				hasTriggeredIOSWelcome.current = true;
+				setTimeout(() => {
+					setShake(true);
+					setTimeout(() => setShake(false), 600);
+					vibrateIfSupported([60, 40, 80, 30, 50, 25, 70]);
+				}, 200);
+			}
+			window.removeEventListener("touchstart", unlock);
+			window.removeEventListener("click", unlock);
+		};
+		window.addEventListener("touchstart", unlock, { once: true });
+		window.addEventListener("click", unlock, { once: true });
+		return () => {
+			window.removeEventListener("touchstart", unlock);
+			window.removeEventListener("click", unlock);
+		};
+	}, [isMobile, reduceMotion]);
 
 	// Bakery products with Easter theme
 	const bakeryProducts = useMemo(
