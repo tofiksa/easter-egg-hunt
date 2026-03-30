@@ -241,6 +241,25 @@ export default function BrokenPage() {
 		return o;
 	}, [bakeryProducts]);
 
+	/* ─── Haptisk velkomst ───────────────────────────────────────────────
+	   Gi brukeren en umiddelbar fysisk følelse av at noe er galt:
+	   en kort serie vibrasjoner som simulerer at nettsiden "rister" i
+	   hendene allerede fra første sekund. Respekterer reduced-motion. */
+	useEffect(() => {
+		if (reduceMotion) return;
+		// Kort forsinkelse slik at siden rekker å rendres før shaken starter
+		const timer = setTimeout(() => {
+			// Visuell shake
+			setShake(true);
+			setTimeout(() => setShake(false), 600);
+			// Haptisk vibrasjon (kun mobil)
+			if (isMobile) {
+				vibrateIfSupported([60, 40, 80, 30, 50, 25, 70]);
+			}
+		}, 400);
+		return () => clearTimeout(timer);
+	}, [reduceMotion, isMobile]);
+
 	useEffect(() => {
 		setShowFaultToast(reduceMotion ? false : Math.random() > 0.35);
 	}, [reduceMotion]);
