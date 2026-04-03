@@ -1,77 +1,126 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
 	Cake,
 	Cookie,
 	CreditCard,
 	Egg,
 	Rabbit,
+	Search,
 	ShoppingCart,
 	Utensils,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+import { AdminUnlockProductMedia } from "@/components/admin-unlock-product-media";
+import {
+	ADMIN_UNLOCK_PRODUCT_ID,
+	adminUnlockProductFikset,
+	isAdminUnlockQuery,
+} from "@/lib/admin-unlock";
+
+function productMatchesQuery(
+	product: {
+		name: string;
+		description: string;
+		category: string;
+	},
+	query: string,
+) {
+	const q = query.trim().toLowerCase();
+	if (!q) return true;
+	const haystack =
+		`${product.name} ${product.description} ${product.category}`.toLowerCase();
+	return haystack.includes(q);
+}
+
+const BAKERY_PRODUCTS = [
+	{
+		id: 1,
+		name: "Marsipanpølse K",
+		price: "39,90 kr",
+		description: "Nybakt bolle med påskepynt og gul glasur",
+		image: "/placeholder.svg?height=200&width=200",
+		icon: Egg,
+		category: "boller",
+	},
+	{
+		id: 2,
+		name: "Påskemarsipan O",
+		price: "89,50 kr",
+		description: "Saftig kake med marsipanpynt og påskemotiv",
+		image: "/placeholder.svg?height=200&width=200",
+		icon: Cake,
+		category: "marsipan",
+	},
+	{
+		id: 3,
+		name: "Sjokoladeegg R",
+		price: "45,00 kr",
+		description: "Store sjokoladeegg med overraskelse inni",
+		image: "/placeholder.svg?height=200&width=200",
+		icon: Cookie,
+		category: "sjokolade",
+	},
+	{
+		id: 4,
+		name: "Påskesøtsaker S",
+		price: "42,00 kr",
+		description: "Små søte påskesnacks — perfekt til kaffen",
+		image: "/placeholder.svg?height=200&width=200",
+		icon: Cake,
+		category: "kaker",
+	},
+	{
+		id: 5,
+		name: "Gule kuler E",
+		price: "55,00 kr",
+		description: "Nybakt brød med gulrøtter og påskekrydder",
+		image: "/placeholder.svg?height=200&width=200",
+		icon: Utensils,
+		category: "brød",
+	},
+	{
+		id: 6,
+		name: "Store nøtter T",
+		price: "62,00 kr",
+		description: "Sprøstekte mandler og hasselnøtter i påskepose",
+		image: "/placeholder.svg?height=200&width=200",
+		icon: Cookie,
+		category: "brød",
+	},
+	{
+		id: 7,
+		name: "Harepus sin favoritt",
+		price: "89,00 kr",
+		description: "Stor sjokoladehare — bakermesterens favoritt",
+		image: "/placeholder.svg?height=200&width=200",
+		icon: Rabbit,
+		category: "sjokolade",
+	},
+] as const;
+
 export default function WorkingPage() {
 	const [cartCount, setCartCount] = useState<number>(0);
 	const [showThankYou, setShowThankYou] = useState(false);
 	const [activeTab, setActiveTab] = useState("alle");
+	const [searchQuery, setSearchQuery] = useState("");
 
-	// Bakery products with Easter theme
-	const bakeryProducts = [
-		{
-			id: 1,
-			name: "Påskebolle Deluxe",
-			price: "39,90 kr",
-			description: "Nybakt bolle med påskepynt og gul glasur",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Egg,
-			category: "boller",
-		},
-		{
-			id: 2,
-			name: "Påskekake",
-			price: "89,50 kr",
-			description: "Saftig kake med marsipanpynt og påskemotiv",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Cake,
-			category: "kaker",
-		},
-		{
-			id: 3,
-			name: "Sjokoladeegg",
-			price: "45,00 kr",
-			description: "Store sjokoladeegg med overraskelse inni",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Cookie,
-			category: "sjokolade",
-		},
-		{
-			id: 4,
-			name: "Påskemarsipan",
-			price: "69,90 kr",
-			description: "Hjemmelaget marsipan formet som påskefigurer",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Rabbit,
-			category: "marsipan",
-		},
-		{
-			id: 5,
-			name: "Påskebrød",
-			price: "55,00 kr",
-			description: "Nybakt brød med gulrøtter og påskekrydder",
-			image: "/placeholder.svg?height=200&width=200",
-			icon: Utensils,
-			category: "brød",
-		},
-	];
-
-	// Filter products based on active tab
-	const filteredProducts =
-		activeTab === "alle"
-			? bakeryProducts
-			: bakeryProducts.filter((product) => product.category === activeTab);
+	// Filter by category tab, then by search (name, description, category)
+	const filteredProducts = useMemo(() => {
+		if (isAdminUnlockQuery(searchQuery)) {
+			return [adminUnlockProductFikset];
+		}
+		const byTab =
+			activeTab === "alle"
+				? BAKERY_PRODUCTS
+				: BAKERY_PRODUCTS.filter(
+						(product) => product.category === activeTab,
+					);
+		return byTab.filter((product) => productMatchesQuery(product, searchQuery));
+	}, [activeTab, searchQuery]);
 
 	// Add to cart function
 	const handleAddToCart = (e: React.MouseEvent) => {
@@ -175,9 +224,39 @@ export default function WorkingPage() {
 
 				{/* Product section */}
 				<section className="mt-12">
-					<h2 className="text-2xl font-bold mb-6 text-purple-700">
+					<h2 className="text-2xl font-bold mb-4 text-purple-700">
 						Våre Påskeprodukter
 					</h2>
+
+					<div className="mb-6">
+						<label htmlFor="product-search" className="sr-only">
+							Søk etter varer
+						</label>
+						<div className="relative max-w-xl">
+							<Search
+								className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-purple-400 pointer-events-none"
+								aria-hidden
+							/>
+							<input
+								id="product-search"
+								type="search"
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								placeholder="Søk etter varenavn, beskrivelse eller kategori…"
+								autoComplete="off"
+								className="w-full rounded-lg border border-purple-200 bg-white py-2.5 pl-10 pr-3 text-sm text-purple-800 shadow-sm placeholder:text-purple-400 focus:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-200"
+							/>
+						</div>
+						{searchQuery.trim() !== "" && (
+							<p className="mt-2 text-sm text-purple-600" aria-live="polite">
+								{isAdminUnlockQuery(searchQuery)
+									? "Systemtilgang bekreftet — viser én klassifisert oppføring (utenfor ordinær katalog)."
+									: filteredProducts.length === 0
+										? `Ingen treff for «${searchQuery.trim()}».`
+										: `${filteredProducts.length} vare${filteredProducts.length === 1 ? "" : "r"} matcher søket.`}
+							</p>
+						)}
+					</div>
 
 					{/* Product filter tabs */}
 					<div className="mb-6 flex flex-wrap gap-2">
@@ -212,6 +291,16 @@ export default function WorkingPage() {
 							Kaker
 						</button>
 						<button
+							onClick={() => setActiveTab("marsipan")}
+							className={`px-4 py-2 rounded-full text-sm font-medium ${
+								activeTab === "marsipan"
+									? "bg-purple-600 text-white"
+									: "bg-purple-100 text-purple-700 hover:bg-purple-200"
+							}`}
+						>
+							Marsipan
+						</button>
+						<button
 							onClick={() => setActiveTab("sjokolade")}
 							className={`px-4 py-2 rounded-full text-sm font-medium ${
 								activeTab === "sjokolade"
@@ -234,45 +323,86 @@ export default function WorkingPage() {
 					</div>
 
 					{/* Products grid */}
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{filteredProducts.map((product) => (
-							<div
-								key={product.id}
-								className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+					{filteredProducts.length === 0 ? (
+						<div className="rounded-lg border border-dashed border-purple-200 bg-purple-50/50 px-4 py-10 text-center text-purple-700">
+							<p className="font-medium">Ingen varer å vise</p>
+							<p className="mt-2 text-sm text-purple-600">
+								Prøv et annet søkeord eller velg «Alle produkter».
+							</p>
+							<button
+								type="button"
+								onClick={() => {
+									setSearchQuery("");
+									setActiveTab("alle");
+								}}
+								className="mt-4 text-sm font-semibold text-pink-600 underline hover:text-pink-800"
 							>
-								<div className="h-48 bg-pink-50 flex items-center justify-center relative">
-									{React.createElement(product.icon, {
-										className: "h-16 w-16 text-purple-400",
-									})}
-								</div>
-								<div className="p-4">
-									<div className="flex justify-between items-start mb-2">
-										<h3 className="text-lg font-bold text-purple-700">
-											{product.name}
-										</h3>
-										<span className="font-bold text-pink-600">
-											{product.price}
-										</span>
+								Nullstill søk og kategori
+							</button>
+						</div>
+					) : (
+						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+							{filteredProducts.map((product) => (
+								<div
+									key={product.id}
+									className={`rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow ${
+										product.id === ADMIN_UNLOCK_PRODUCT_ID
+											? "bg-gradient-to-b from-amber-50 to-white ring-2 ring-amber-400/70"
+											: "bg-white"
+									}`}
+								>
+									<div
+										className={`h-48 flex items-center justify-center relative ${
+											product.id === ADMIN_UNLOCK_PRODUCT_ID
+												? "bg-gradient-to-br from-amber-100 via-yellow-50 to-purple-50"
+												: "bg-pink-50"
+										}`}
+									>
+										{product.id === ADMIN_UNLOCK_PRODUCT_ID ? (
+											<AdminUnlockProductMedia />
+										) : (
+											React.createElement(product.icon, {
+												className: "h-16 w-16 text-purple-400",
+											})
+										)}
 									</div>
-									<p className="text-purple-600 text-sm mb-4">
-										{product.description}
-									</p>
-									<div className="flex justify-between items-center">
-										<span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-											På lager
-										</span>
-										<button
-											className="bg-yellow-400 hover:bg-yellow-500 text-purple-800 px-3 py-2 rounded text-sm font-bold flex items-center gap-1 transition-colors"
-											onClick={handleAddToCart}
-										>
-											<ShoppingCart className="h-4 w-4" />
-											Legg i kurv
-										</button>
+									<div className="p-4">
+										<div className="flex justify-between items-start mb-2">
+											<h3 className="text-lg font-bold text-purple-700">
+												{product.name}
+											</h3>
+											<span className="font-bold text-pink-600">
+												{product.price}
+											</span>
+										</div>
+										<p className="text-purple-600 text-sm mb-4">
+											{product.description}
+										</p>
+										<div className="flex justify-between items-center">
+											<span
+												className={`text-xs px-2 py-1 rounded-full ${
+													product.id === ADMIN_UNLOCK_PRODUCT_ID
+														? "bg-emerald-200 text-emerald-900 font-mono font-semibold"
+														: "bg-green-100 text-green-800"
+												}`}
+											>
+												{product.id === ADMIN_UNLOCK_PRODUCT_ID
+													? "OVERRIDE"
+													: "På lager"}
+											</span>
+											<button
+												className="bg-yellow-400 hover:bg-yellow-500 text-purple-800 px-3 py-2 rounded text-sm font-bold flex items-center gap-1 transition-colors"
+												onClick={handleAddToCart}
+											>
+												<ShoppingCart className="h-4 w-4" />
+												Legg i kurv
+											</button>
+										</div>
 									</div>
 								</div>
-							</div>
-						))}
-					</div>
+							))}
+						</div>
+					)}
 				</section>
 
 				{/* Checkout section */}
@@ -288,7 +418,7 @@ export default function WorkingPage() {
 									<div className="h-10 w-10 bg-yellow-100 rounded-full flex items-center justify-center">
 										<Egg className="h-5 w-5 text-purple-500" />
 									</div>
-									<span className="text-purple-700">Påskebolle Deluxe</span>
+									<span className="text-purple-700">Marsipanpølse K</span>
 								</div>
 								<span className="text-pink-600">39,90 kr</span>
 							</div>
@@ -299,7 +429,7 @@ export default function WorkingPage() {
 										<div className="h-10 w-10 bg-pink-100 rounded-full flex items-center justify-center">
 											<Cookie className="h-5 w-5 text-purple-500" />
 										</div>
-										<span className="text-purple-700">Sjokoladeegg</span>
+										<span className="text-purple-700">Sjokoladeegg R</span>
 									</div>
 									<span className="text-pink-600">45,00 kr</span>
 								</div>
@@ -375,6 +505,10 @@ export default function WorkingPage() {
 						<p className="text-yellow-200">
 							&copy; 2023-2024 Bakermester Harepus AS. Alle rettigheter
 							reservert.
+						</p>
+						<p className="mt-4 text-xs text-red-300 font-mono">
+							System Error: ShadowBunny has encrypted the eggs. Access denied
+							without the 3-digit admin code from Høybråten.
 						</p>
 					</div>
 				</div>
