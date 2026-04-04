@@ -93,7 +93,7 @@ export default function ButikkPage() {
 					<span className="text-red-600">ugyldig</span> — akkurat som på
 					forsiden. Systemet hevder at koden ble spist av en intern
 					påskekylling. Vi etterforsker ikke nærmere. Kanskje det hjelper å
-					sende hjerter til Abu-hint?
+					sende 'hjerter' til Abu-hint?
 				</p>
 			</section>
 
