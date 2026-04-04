@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AlertTriangle, Cookie, Egg, Lock, Rabbit, Utensils } from "lucide-react";
+import {
+	AlertTriangle,
+	Cookie,
+	Egg,
+	Lock,
+	Rabbit,
+	Utensils,
+} from "lucide-react";
 
 import { BrokenBakeryChrome } from "@/components/broken-bakery-chrome";
 
@@ -83,9 +90,10 @@ export default function ButikkPage() {
 				</div>
 				<p className="text-sm text-green-700 corrupt-text">
 					<span className="line-through">PÅSKE2025</span> er fortsatt{" "}
-					<span className="text-red-600">ugyldig</span> — akkurat som på forsiden.
-					Systemet hevder at koden ble spist av en intern påskekylling. Vi
-					etterforsker ikke nærmere.
+					<span className="text-red-600">ugyldig</span> — akkurat som på
+					forsiden. Systemet hevder at koden ble spist av en intern
+					påskekylling. Vi etterforsker ikke nærmere. Kanskje det hjelper å
+					sende hjerter til Abu-hint?
 				</p>
 			</section>
 
