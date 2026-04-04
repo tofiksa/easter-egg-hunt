@@ -33,12 +33,13 @@ export default function KontaktPage() {
 						Telefon
 					</h2>
 					<p className="text-sm text-purple-800 corrupt-text mb-2">
-						<span className="font-mono">+47 22 33 44 55</span> (påskehotline)
+						<span className="font-mono">+46 72 60 00 503</span> (påskehotline)
 					</p>
 					<p className="text-xs text-red-600 bg-red-50 border border-red-200 p-2 rounded">
 						For øyeblikket: linjen er stengt av «påskeferie på
 						betalingsserveren». Du kan like gjerne nynne påskeviser i
-						telefonsvareren — den svarer ikke, men den har god rytme.
+						telefonsvareren — den svarer ikke, men den har god rytme. Men du kan
+						forsøke å sende sms til +46 72 60 00 503
 					</p>
 				</section>
 
@@ -76,8 +77,8 @@ export default function KontaktPage() {
 					</p>
 					<p className="mt-2 text-xs text-purple-600 font-mono border-l-4 border-pink-400 pl-3">
 						Åpningstider følger forsiden: alt som er gjennomstreket er stengt.
-						Hvis du bor i nærheten av steder der admin-koder og egg-hint
-						nevnes… ta med godt humør og en ekstra kopp kaffe.
+						Hvis du bor i nærheten av steder der admin-koder og egg-hint nevnes…
+						ta med godt humør og en ekstra kopp kaffe.
 					</p>
 				</section>
 			</div>

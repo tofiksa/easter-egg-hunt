@@ -51,6 +51,9 @@ const POSSIBLE_ERRORS = [
 	"KERNELPANIKK: Eggemaling stoppet",
 ] as const;
 
+/** Vare med ekte Prior-egg-bilde i katalogen */
+const PRIOR_EGG_PRODUCT_ID = 7;
+
 type ErrorLine = { id: string; text: string };
 
 type Pos = { x: number; y: number };
@@ -251,12 +254,12 @@ export default function BrokenHomePage() {
 				icon: Cookie,
 			},
 			{
-				id: 7,
-				name: "Harepus sin favoritt",
-				price: "89,00 kr",
-				description: "Stor sjokoladehare — bakermesterens favoritt",
-				image: "/placeholder.svg?height=200&width=200",
-				icon: Rabbit,
+				id: PRIOR_EGG_PRODUCT_ID,
+				name: "Prior egg",
+				price: "55,90 kr",
+				description: "Frittgående høner fra norske bondegårder",
+				image: "/prior-egg-karton.png",
+				icon: Egg,
 			},
 		],
 		[],
@@ -537,21 +540,24 @@ export default function BrokenHomePage() {
 							</div>
 						</div>
 
-						<div className="w-full relative h-48 animate-glitch-image">
-							<div className="absolute inset-0 bg-static opacity-30 z-10" />
+						<div className="w-full relative h-48 animate-glitch-image overflow-hidden rounded-md">
 							<Image
-								src="/hint.png"
-								alt="Mystisk Påskeegg"
-								width={400}
-								height={300}
-								className="object-contain w-full h-full broken-image hover:animate-glitch-hover transform hover:scale-110 transition-transform duration-300"
+								src="/hjerter-skole.png"
+								alt="Røde hjerter malt på våt asfalt"
+								fill
+								className="object-cover object-center z-0 transition-transform duration-300 hover:scale-[1.02]"
 								style={{
-									filter: "hue-rotate(45deg) contrast(150%) brightness(110%)",
-									mixBlendMode: "multiply",
+									filter: "contrast(1.06) saturate(1.04)",
 								}}
+								sizes="(max-width: 768px) 100vw, 896px"
+								priority
 							/>
-							<div className="absolute bottom-0 left-0 right-0 bg-purple-500 text-white text-center py-1 animate-slide-in-out text-xs">
-								Mystisk Påskeegg Oppdaget: Prøv å klikk!
+							<div
+								className="pointer-events-none absolute inset-0 z-[1] bg-static opacity-20"
+								aria-hidden
+							/>
+							<div className="absolute bottom-0 left-0 right-0 z-[2] bg-purple-500 text-white text-center py-1 animate-slide-in-out text-xs">
+								Hint i sporet — prøv å klikk!
 							</div>
 						</div>
 					</div>
@@ -567,21 +573,20 @@ export default function BrokenHomePage() {
 					</p>
 					<div
 						ref={errorLayerRef}
-						className="relative min-h-[min(360px,55vh)] w-full overflow-hidden rounded-lg border-2 border-dashed border-pink-300/50 bg-purple-950/25"
+						className="relative min-h-[min(360px,55vh)] w-full overflow-hidden rounded-lg border-2 border-dashed border-pink-300/50 bg-purple-950/20"
 					>
-						<div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-md">
-							<Image
-								src="/hint.png"
-								alt=""
-								fill
-								className="object-cover object-center opacity-[0.97]"
-								sizes="(max-width: 768px) 100vw, 896px"
-							/>
-							<div
-								className="absolute inset-0 bg-gradient-to-b from-fuchsia-950/25 via-transparent to-purple-950/45"
-								aria-hidden
-							/>
-						</div>
+						<Image
+							src="/shadow-bunny-hacker.png"
+							alt=""
+							fill
+							className="pointer-events-none object-cover object-center z-0"
+							sizes="(max-width: 768px) 100vw, 896px"
+							priority
+						/>
+						<div
+							className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-purple-950/35 via-transparent to-purple-950/50"
+							aria-hidden
+						/>
 						{errorMessages.map((entry, i) => {
 							const pos = errorPositions[entry.id] ?? {
 								x: 8,
@@ -703,10 +708,18 @@ export default function BrokenHomePage() {
 								>
 									{product.id === ADMIN_UNLOCK_PRODUCT_ID ? (
 										<AdminUnlockProductMedia size="sm" />
+									) : product.id === PRIOR_EGG_PRODUCT_ID ? (
+										<Image
+											src="/prior-egg-karton.png"
+											alt="Prior egg — frittgående høner fra norske bondegårder"
+											fill
+											className="object-cover object-[center_45%_50%]"
+											sizes="128px"
+										/>
 									) : (
 										<>
 											<div className="absolute inset-0 bg-static opacity-20" />
-											<div className="text-purple-400 flex flex-col items-center">
+											<div className="text-purple-400 flex flex-col items-center relative z-[1]">
 												{React.createElement(product.icon, {
 													className: "h-8 w-8 mb-1",
 												})}

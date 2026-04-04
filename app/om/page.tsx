@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Cake, Heart, Rabbit, Sparkles } from "lucide-react";
+import { Cake, Heart, Rabbit } from "lucide-react";
 
 import { BrokenBakeryChrome } from "@/components/broken-bakery-chrome";
+import { ShadowBunnyGlasurArticle } from "@/components/shadow-bunny-glasur-article";
 
 export const metadata: Metadata = {
 	title: "Om oss — Bakermester Harepus",
@@ -40,26 +41,7 @@ export default function OmPage() {
 					</p>
 				</article>
 
-				<article className="bg-yellow-50 p-4 border-2 border-pink-300 decay-mold-border rounded-lg animate-structural-sway">
-					<div className="flex items-center gap-2 mb-2">
-						<Sparkles className="h-5 w-5 text-amber-600" />
-						<h2 className="text-lg font-bold text-purple-700">
-							Hva skjedde egentlig?
-						</h2>
-					</div>
-					<p className="text-sm text-purple-800 corrupt-text leading-relaxed">
-						Offisiell versjon:{" "}
-						<span className="italic">tekniske problemer</span> og at påskeharer
-						jobber hardt. Uoffisiell versjon: en hendelse vi kaller «den store
-						glasur-ulykken», der lager, nettside og en mystisk gjest ved navn{" "}
-						<span className="font-mono text-xs bg-purple-100 px-1 rounded">
-							ShadowBunny
-						</span>{" "}
-						ble blandet sammen i feil rekkefølge. Resultatet er synkroniseringsfeil,
-						risting, og feilmeldinger som kan dras rundt som post-it-lapper i
-						vinden.
-					</p>
-				</article>
+				<ShadowBunnyGlasurArticle />
 
 				<article className="bg-purple-900/10 p-4 border-2 border-yellow-300 decay-mold-border rounded-lg">
 					<div className="flex items-center gap-2 mb-2">
