@@ -10,7 +10,7 @@ export const ADMIN_UNLOCK_NAME =
 	"SYSTEM UNLOCKED: ADMIN ACCESS GRANTED";
 
 export const ADMIN_UNLOCK_DESCRIPTION =
-	"Gratulerer agenter! Dere har overstyrt ShadowBunny. For å finne de fysiske eggene, må dere gå til فاطمة og"  
+	"Gratulerer agenter! Dere har overstyrt ShadowBunny. For å finne de fysiske eggene, må dere gå til فاطمة og" +  
 	"si det man pleier å si etter maten. Da vil dere få nøkkelen til gjemmestedet som er merket med en påskekylling.";
 
 export const ADMIN_UNLOCK_PRICE = "0 kr";
